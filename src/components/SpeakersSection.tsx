@@ -13,6 +13,7 @@ import airtonMottaPhoto from '../assets/airton-motta-fb30a.jpg'
 import anaPaulaPhoto from '../assets/ana-paula-guimaraes-1a8a3.jpg'
 import gabrielRezendePhoto from '../assets/gabriel-rezende-c8151.jpg'
 import lucianoCastroPhoto from '../assets/luciano-castro-0e113.jpg'
+import marcosArthurPhoto from '../assets/marcos-arthur-ab89a.jpg'
 
 export interface Speaker {
   id: string
@@ -79,6 +80,7 @@ const SPEAKERS: Speaker[] = [
     credentials:
       'R$ 1 bilhão em créditos comercializados • +800 clientes • Top 1 em SP pela HS Consórcios (2025)',
     talkTopic: 'PATRIMÔNIO EM MOVIMENTO',
+    photoUrl: marcosArthurPhoto,
   },
   {
     id: 'magnum-nascimento',
