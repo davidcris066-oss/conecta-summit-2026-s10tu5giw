@@ -348,23 +348,22 @@ export function SpeakersSection() {
                 <div className="relative mb-4 group/photo">
                   {/* Subtle navy/cyan gradient border frame */}
                   <div className="relative overflow-hidden rounded-2xl p-[1.5px] bg-gradient-to-b from-[#00E5FF]/60 via-[#0057FF]/40 to-[#00E5FF]/20 shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_28px_rgba(0,229,255,0.25)] transition-all duration-300">
-                    <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden rounded-[14px] bg-[#050A15]">
+                    <div className="relative aspect-[4/5] sm:aspect-[4/5] w-full overflow-hidden rounded-[14px] bg-[#050A15]">
                       <img
                         src={speaker.photoUrl}
                         alt={`Foto de ${speaker.name}`}
-                        className="w-full h-full object-cover object-top filter brightness-[1.02] contrast-[1.02] transition-transform duration-500 ease-out group-hover:scale-105"
+                        className="w-full h-full object-cover object-[center_top] filter brightness-[1.02] contrast-[1.02] transition-transform duration-500 ease-out group-hover:scale-105"
                         loading="lazy"
                       />
                       {/* Subtle ambient gradient overlay at base of image for visual harmony */}
                       <div
-                        className="absolute inset-0 bg-gradient-to-t from-[#0D1B33]/80 via-transparent to-transparent pointer-events-none"
+                        className="absolute inset-0 bg-gradient-to-t from-[#0D1B33]/70 via-transparent to-transparent pointer-events-none"
                         aria-hidden="true"
                       />
                     </div>
                   </div>
                 </div>
               )}
-
               {/* Speaker Name (Verbatim) */}
               <h3 className="font-sora font-extrabold text-xl sm:text-2xl text-white group-hover:text-[#00E5FF] tracking-tight mb-2 leading-snug transition-colors">
                 {speaker.name}
@@ -455,19 +454,18 @@ export function SpeakersSection() {
                 }
               >
                 {selectedSpeaker.photoUrl && (
-                  <div className="flex-shrink-0 w-32 sm:w-36 md:w-40">
+                  <div className="flex-shrink-0 w-32 sm:w-36 md:w-44">
                     <div className="overflow-hidden rounded-2xl p-[1.5px] bg-gradient-to-b from-[#00E5FF] via-[#0057FF]/60 to-[#00E5FF]/40 shadow-[0_8px_24px_rgba(0,0,0,0.5),0_0_20px_rgba(0,229,255,0.2)]">
                       <div className="aspect-[4/5] w-full overflow-hidden rounded-[14px] bg-[#050A15]">
                         <img
                           src={selectedSpeaker.photoUrl}
                           alt={`Foto de ${selectedSpeaker.name}`}
-                          className="w-full h-full object-cover object-top"
+                          className="w-full h-full object-cover object-[center_top]"
                         />
                       </div>
                     </div>
                   </div>
                 )}
-
                 <div className="flex-1 min-w-0">
                   {/* Tags: Role & Location */}
                   <div className="flex flex-wrap items-center gap-2 mb-3">
