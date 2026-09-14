@@ -196,20 +196,16 @@ export function GiftsSection() {
           </div>
         </div>
 
-        {/* Right Side: Title, Text & Highlights */}
+        {/* Right Side: Text & Highlights */}
         <div className="lg:col-span-6 flex flex-col items-start text-left order-1 lg:order-2">
-          <span className="text-[#00E5FF] text-xs sm:text-sm font-semibold tracking-[0.14em] uppercase mb-3">
+          <span
+            id="brindes-title"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-[#00E5FF] text-xs sm:text-sm font-semibold tracking-[0.14em] uppercase mb-5"
+          >
             Lembrança Viva
           </span>
 
-          <h2
-            id="brindes-title"
-            className="font-sora font-extrabold text-2xl sm:text-4xl lg:text-5xl text-white tracking-[-0.02em] leading-[1.15] mb-5"
-          >
-            Você leva a experiência com você.
-          </h2>
-
-          <p className="text-[#C7D6EA] text-base sm:text-lg leading-relaxed font-normal mb-8">
+          <p className="text-[#E2E8F0] text-lg sm:text-xl lg:text-2xl leading-relaxed font-normal mb-8">
             Os brindes do Conecta Summit foram pensados para marcar sua presença e lembrar que cada
             participante faz parte desta conexão.
           </p>
