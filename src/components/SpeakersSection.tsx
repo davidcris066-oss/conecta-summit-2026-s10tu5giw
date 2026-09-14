@@ -9,6 +9,7 @@ import {
   ExternalLink,
   BookOpen,
 } from 'lucide-react'
+import airtonMottaPhoto from '../assets/airton-motta-fb30a.jpg'
 
 export interface Speaker {
   id: string
@@ -34,6 +35,7 @@ const SPEAKERS: Speaker[] = [
     bio: 'Palestrante profissional, escritor e especialista em comunicação, autoridade e marca pessoal. Fundador da AM7 Educação e da A Caza Millennium, reúne mais de 18 anos de experiência e já impactou milhares de pessoas por meio de palestras, treinamentos e mentorias.',
     credentials: 'Top 100 The Best Speakers Brasil 2025 • Top 200 em 2026',
     talkTopic: 'COMUNICAÇÃO QUE GERA OPORTUNIDADES',
+    photoUrl: airtonMottaPhoto,
   },
   {
     id: 'ana-paula-guimaraes',
@@ -341,6 +343,28 @@ export function SpeakersSection() {
                 )}
               </div>
 
+              {/* Optional Speaker Photo (Rendered only when official photo is provided) */}
+              {speaker.photoUrl && (
+                <div className="relative mb-4 group/photo">
+                  {/* Subtle navy/cyan gradient border frame */}
+                  <div className="relative overflow-hidden rounded-2xl p-[1.5px] bg-gradient-to-b from-[#00E5FF]/60 via-[#0057FF]/40 to-[#00E5FF]/20 shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:shadow-[0_12px_28px_rgba(0,229,255,0.25)] transition-all duration-300">
+                    <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden rounded-[14px] bg-[#050A15]">
+                      <img
+                        src={speaker.photoUrl}
+                        alt={`Foto de ${speaker.name}`}
+                        className="w-full h-full object-cover object-top filter brightness-[1.02] contrast-[1.02] transition-transform duration-500 ease-out group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      {/* Subtle ambient gradient overlay at base of image for visual harmony */}
+                      <div
+                        className="absolute inset-0 bg-gradient-to-t from-[#0D1B33]/80 via-transparent to-transparent pointer-events-none"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Speaker Name (Verbatim) */}
               <h3 className="font-sora font-extrabold text-xl sm:text-2xl text-white group-hover:text-[#00E5FF] tracking-tight mb-2 leading-snug transition-colors">
                 {speaker.name}
@@ -417,7 +441,7 @@ export function SpeakersSection() {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Header: Clean typography + tags (no photo / no monogram) */}
+            {/* Header: Photo (when provided) + Clean typography + tags */}
             <div className="relative mb-6 pb-6 border-b border-white/10 pr-10">
               {/* Subtle decorative glow line in navy/cyan */}
               <div
@@ -425,38 +449,60 @@ export function SpeakersSection() {
                 aria-hidden="true"
               />
 
-              {/* Tags: Role & Location */}
-              <div className="flex flex-wrap items-center gap-2 mb-3">
-                {selectedSpeaker.badgeRole ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-semibold shadow-sm">
-                    <Sparkles className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
-                    {selectedSpeaker.badgeRole}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#8FA3BF] text-xs font-medium uppercase tracking-wider">
-                    Palestrante Conecta Summit
-                  </span>
-                )}
-                {selectedSpeaker.location && (
-                  <span className="inline-flex items-center gap-1 text-xs text-[#8FA3BF] font-medium bg-[#0D1B33] px-3 py-0.5 rounded-full border border-white/10">
-                    <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
-                    {selectedSpeaker.location}
-                  </span>
-                )}
-              </div>
-
-              {/* Speaker Name */}
-              <h3
-                id={titleId}
-                className="font-sora font-extrabold text-2xl sm:text-3xl md:text-4xl text-white tracking-tight leading-tight mb-2"
+              <div
+                className={
+                  selectedSpeaker.photoUrl ? 'flex flex-col sm:flex-row gap-5 items-start' : ''
+                }
               >
-                {selectedSpeaker.name}
-              </h3>
+                {selectedSpeaker.photoUrl && (
+                  <div className="flex-shrink-0 w-32 sm:w-36 md:w-40">
+                    <div className="overflow-hidden rounded-2xl p-[1.5px] bg-gradient-to-b from-[#00E5FF] via-[#0057FF]/60 to-[#00E5FF]/40 shadow-[0_8px_24px_rgba(0,0,0,0.5),0_0_20px_rgba(0,229,255,0.2)]">
+                      <div className="aspect-[4/5] w-full overflow-hidden rounded-[14px] bg-[#050A15]">
+                        <img
+                          src={selectedSpeaker.photoUrl}
+                          alt={`Foto de ${selectedSpeaker.name}`}
+                          className="w-full h-full object-cover object-top"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-              {/* Headline */}
-              <p className="text-[#00E5FF] text-sm sm:text-base font-medium leading-relaxed">
-                {selectedSpeaker.headline}
-              </p>
+                <div className="flex-1 min-w-0">
+                  {/* Tags: Role & Location */}
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {selectedSpeaker.badgeRole ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-semibold shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
+                        {selectedSpeaker.badgeRole}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#8FA3BF] text-xs font-medium uppercase tracking-wider">
+                        Palestrante Conecta Summit
+                      </span>
+                    )}
+                    {selectedSpeaker.location && (
+                      <span className="inline-flex items-center gap-1 text-xs text-[#8FA3BF] font-medium bg-[#0D1B33] px-3 py-0.5 rounded-full border border-white/10">
+                        <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
+                        {selectedSpeaker.location}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Speaker Name */}
+                  <h3
+                    id={titleId}
+                    className="font-sora font-extrabold text-2xl sm:text-3xl md:text-4xl text-white tracking-tight leading-tight mb-2"
+                  >
+                    {selectedSpeaker.name}
+                  </h3>
+
+                  {/* Headline */}
+                  <p className="text-[#00E5FF] text-sm sm:text-base font-medium leading-relaxed">
+                    {selectedSpeaker.headline}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Talk Topic Banner */}
