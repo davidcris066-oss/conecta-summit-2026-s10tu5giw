@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react'
 import { HeroSection } from '@/components/HeroSection'
 import { PresentationSection } from '@/components/PresentationSection'
 import { BadgeSection } from '@/components/BadgeSection'
-import { GiftsSection } from '@/components/GiftsSection'
 import { SpeakersSection } from '@/components/SpeakersSection'
 import { JourneySection } from '@/components/JourneySection'
 import { EventInfoSection } from '@/components/EventInfoSection'
@@ -78,27 +77,24 @@ export default function Index() {
       {/* 3. CRACHÁ PERSONALIZADO */}
       <BadgeSection />
 
-      {/* 4. BRINDES */}
-      <GiftsSection />
-
-      {/* 5. PALESTRANTES */}
+      {/* 4. PALESTRANTES */}
       <SpeakersSection />
 
-      {/* 6. JORNADA DO PARTICIPANTE */}
+      {/* 5. JORNADA DO PARTICIPANTE */}
       <JourneySection />
 
-      {/* 7. INFORMAÇÕES DO EVENTO */}
+      {/* 6. INFORMAÇÕES DO EVENTO */}
       <EventInfoSection />
 
-      {/* 8. PERGUNTAS FREQUENTES */}
+      {/* 7. PERGUNTAS FREQUENTES */}
       <FaqSection />
 
-      {/* 9. CHAMADA FINAL + CAPTURA DE INSCRIÇÃO */}
+      {/* 8. CHAMADA FINAL + CAPTURA DE INSCRIÇÃO */}
       <div ref={registrationRef}>
         <RegistrationSection />
       </div>
 
-      {/* 10. BOTÃO FLUTUANTE (só mobile, desaparece com final CTA em foco) */}
+      {/* 9. BOTÃO FLUTUANTE (só mobile, desaparece com final CTA em foco) */}
       <FloatingCta visible={showFloatingCta} onClick={scrollToRegistration} />
     </div>
   )
