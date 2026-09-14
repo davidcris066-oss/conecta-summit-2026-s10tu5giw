@@ -10,6 +10,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import airtonMottaPhoto from '../assets/airton-motta-fb30a.jpg'
+import anaPaulaPhoto from '../assets/ana-paula-guimaraes-1a8a3.jpg'
 
 export interface Speaker {
   id: string
@@ -45,6 +46,7 @@ const SPEAKERS: Speaker[] = [
     bio: 'Psicóloga clínica, mentora e palestrante, com mais de 13 anos de atuação em desenvolvimento humano. Trabalha com TCC e Logoterapia, conectando saúde emocional, liderança, comunicação e presença estratégica. É fundadora da Lumina.',
     credentials: 'Saúde mental • Liderança • Desenvolvimento humano',
     talkTopic: 'SAÚDE MENTAL COM PROPÓSITO',
+    photoUrl: anaPaulaPhoto,
   },
   {
     id: 'gabriel-rezende',
