@@ -12,6 +12,7 @@ import {
 import airtonMottaPhoto from '../assets/airton-motta-fb30a.jpg'
 import anaPaulaPhoto from '../assets/ana-paula-guimaraes-1a8a3.jpg'
 import gabrielRezendePhoto from '../assets/gabriel-rezende-c8151.jpg'
+import lucianoCastroPhoto from '../assets/luciano-castro-0e113.jpg'
 
 export interface Speaker {
   id: string
@@ -67,6 +68,7 @@ const SPEAKERS: Speaker[] = [
     bio: 'Especialista em comportamento financeiro e gestão estratégica. À frente da Legátum, desenvolve soluções que conectam comportamento, números e estratégia para transformar decisões em resultados sustentáveis. É criador do Método CEP – Consciência, Estrutura e Patrimônio.',
     credentials: 'Comportamento • Estratégia • Patrimônio',
     talkTopic: 'GESTÃO FINANCEIRA PARA RESULTADOS REAIS',
+    photoUrl: lucianoCastroPhoto,
   },
   {
     id: 'marcos-arthur',
