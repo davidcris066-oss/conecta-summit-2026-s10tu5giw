@@ -14,6 +14,7 @@ import anaPaulaPhoto from '../assets/ana-paula-guimaraes-1a8a3.jpg'
 import gabrielRezendePhoto from '../assets/gabriel-rezende-c8151.jpg'
 import lucianoCastroPhoto from '../assets/luciano-castro-0e113.jpg'
 import marcosArthurPhoto from '../assets/marcos-arthur-ab89a.jpg'
+import magnumNascimentoPhoto from '../assets/magnum-nascimento-88e8b.jpg'
 
 export interface Speaker {
   id: string
@@ -91,6 +92,7 @@ const SPEAKERS: Speaker[] = [
     credentials: '25+ ANOS • GRUPO STUDIO • M2B • LICITAÇÕES E NEGÓCIOS',
     extra:
       'À frente da construção da M2B – Método Magnum Business –, dedica-se a apoiar empresários e empreendedores na estruturação de negócios sólidos, lucrativos e com propósito, usando conhecimento, comunicação, CNPJ e conexões como ferramentas de crescimento e geração de oportunidades.',
+    photoUrl: magnumNascimentoPhoto,
   },
 ]
 
