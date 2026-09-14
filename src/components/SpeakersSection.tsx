@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import airtonMottaPhoto from '../assets/airton-motta-fb30a.jpg'
 import anaPaulaPhoto from '../assets/ana-paula-guimaraes-1a8a3.jpg'
+import gabrielRezendePhoto from '../assets/gabriel-rezende-c8151.jpg'
 
 export interface Speaker {
   id: string
@@ -56,6 +57,7 @@ const SPEAKERS: Speaker[] = [
     bio: "Executivo com mais de 15 anos de experiência em gestão, vendas, expansão e negócios. Formado em Comércio Exterior e Relações Internacionais pela FGV e pós-graduado em Gestão de Negócios pela FAAP. Construiu trajetória em empresas como McDonald's, RTE Rodonaves, Dell Anno e Giraffas.",
     credentials: 'Grupo Studio • Estratégia • Expansão • Negócios',
     talkTopic: 'REFORMA TRIBUTÁRIA – DO IMPACTO À OPORTUNIDADE',
+    photoUrl: gabrielRezendePhoto,
   },
   {
     id: 'luciano-castro',
