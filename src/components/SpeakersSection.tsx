@@ -1,7 +1,17 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { ChevronLeft, ChevronRight, MapPin, Sparkles, Award } from 'lucide-react'
+import { useEffect, useRef, useState, useCallback, useId } from 'react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  Sparkles,
+  Award,
+  X,
+  ExternalLink,
+  BookOpen,
+} from 'lucide-react'
 
-interface Speaker {
+export interface Speaker {
+  id: string
   name: string
   headline: string
   location?: string
@@ -12,10 +22,12 @@ interface Speaker {
   badgeRole?: string
   initials: string
   accentGradient: string
+  photoUrl?: string
 }
 
 const SPEAKERS: Speaker[] = [
   {
+    id: 'airton-motta',
     name: 'AIRTON MOTTA',
     headline: 'Comunicação • Autoridade • Marca Pessoal',
     location: 'PORTO ALEGRE - RS',
@@ -24,8 +36,10 @@ const SPEAKERS: Speaker[] = [
     talkTopic: 'COMUNICAÇÃO QUE GERA OPORTUNIDADES',
     initials: 'AM',
     accentGradient: 'from-[#0057FF] to-[#00E5FF]',
+    photoUrl: 'https://img.usecurling.com/ppl/medium?gender=male&seed=41',
   },
   {
+    id: 'ana-paula-guimaraes',
     name: 'ANA PAULA GUIMARÃES',
     headline: 'Psicóloga • Mentora • Palestrante',
     location: 'SÃO PAULO - SP',
@@ -34,8 +48,10 @@ const SPEAKERS: Speaker[] = [
     talkTopic: 'SAÚDE MENTAL COM PROPÓSITO',
     initials: 'AG',
     accentGradient: 'from-[#00E5FF] to-[#00A3FF]',
+    photoUrl: 'https://img.usecurling.com/ppl/medium?gender=female&seed=28',
   },
   {
+    id: 'gabriel-rezende',
     name: 'GABRIEL REZENDE',
     headline: 'Head Comercial do Grupo Studio',
     location: 'PORTO ALEGRE - RS',
@@ -44,8 +60,10 @@ const SPEAKERS: Speaker[] = [
     talkTopic: 'REFORMA TRIBUTÁRIA – DO IMPACTO À OPORTUNIDADE',
     initials: 'GR',
     accentGradient: 'from-[#0057FF] to-[#00E5FF]',
+    photoUrl: 'https://img.usecurling.com/ppl/medium?gender=male&seed=15',
   },
   {
+    id: 'luciano-castro',
     name: 'LUCIANO CASTRO',
     headline: 'Consultor • Mentor • Professor',
     location: 'PORTO ALEGRE - RS',
@@ -54,8 +72,10 @@ const SPEAKERS: Speaker[] = [
     talkTopic: 'GESTÃO FINANCEIRA PARA RESULTADOS REAIS',
     initials: 'LC',
     accentGradient: 'from-[#0057FF] to-[#00C2FF]',
+    photoUrl: 'https://img.usecurling.com/ppl/medium?gender=male&seed=53',
   },
   {
+    id: 'marcos-arthur',
     name: 'MARCOS ARTHUR',
     headline: 'Empresário • Construção Patrimonial • Investimentos',
     location: 'SÃO PAULO - SP',
@@ -65,8 +85,10 @@ const SPEAKERS: Speaker[] = [
     talkTopic: 'PATRIMÔNIO EM MOVIMENTO',
     initials: 'MA',
     accentGradient: 'from-[#0060FF] to-[#00E5FF]',
+    photoUrl: 'https://img.usecurling.com/ppl/medium?gender=male&seed=33',
   },
   {
+    id: 'magnum-nascimento',
     name: 'MAGNUM NASCIMENTO',
     headline: 'Contador • Empreendedor • Especialista em Licitações e Negócios',
     badgeRole: 'Concepção e Produção Executiva',
@@ -76,6 +98,7 @@ const SPEAKERS: Speaker[] = [
       'À frente da construção da M2B – Método Magnum Business –, dedica-se a apoiar empresários e empreendedores na estruturação de negócios sólidos, lucrativos e com propósito, usando conhecimento, comunicação, CNPJ e conexões como ferramentas de crescimento e geração de oportunidades.',
     initials: 'MN',
     accentGradient: 'from-[#0040E0] to-[#00E5FF]',
+    photoUrl: 'https://img.usecurling.com/ppl/medium?gender=male&seed=77',
   },
 ]
 
@@ -94,6 +117,11 @@ export function SpeakersSection() {
   const scrollStartRef = useRef(0)
 
   const [isPaused, setIsPaused] = useState(false)
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null)
+  const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({})
+
+  const titleId = useId()
+  const descId = useId()
 
   const pauseInteraction = useCallback(() => {
     isInteractingRef.current = true
@@ -122,6 +150,12 @@ export function SpeakersSection() {
     const step = (currentTimestamp: number) => {
       const delta = (currentTimestamp - lastTimestamp) / 16.666
       lastTimestamp = currentTimestamp
+
+      // Do not auto-scroll if modal is open or user is interacting
+      if (selectedSpeaker) {
+        animationFrameRef.current = requestAnimationFrame(step)
+        return
+      }
 
       const container = scrollRef.current
       if (container && !isInteractingRef.current) {
@@ -176,6 +210,46 @@ export function SpeakersSection() {
     if (!scrollRef.current) return
     const offset = direction === 'left' ? -320 : 320
     scrollRef.current.scrollBy({ left: offset, behavior: 'smooth' })
+  }
+
+  // Handle speaker selection / modal opening
+  const handleOpenSpeaker = (speaker: Speaker) => {
+    isInteractingRef.current = true
+    setIsPaused(true)
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current)
+    }
+    setSelectedSpeaker(speaker)
+  }
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedSpeaker(null)
+    // Retoma carrossel após pequeno intervalo
+    if (resumeTimerRef.current) {
+      clearTimeout(resumeTimerRef.current)
+    }
+    resumeTimerRef.current = setTimeout(() => {
+      isInteractingRef.current = false
+      setIsPaused(false)
+    }, 1500)
+  }, [])
+
+  // Keyboard navigation (Escape key to close modal)
+  useEffect(() => {
+    if (!selectedSpeaker) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleCloseModal()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedSpeaker, handleCloseModal])
+
+  const handleImageError = (speakerId: string) => {
+    setImgErrors((prev) => ({ ...prev, [speakerId]: true }))
   }
 
   return (
@@ -247,80 +321,263 @@ export function SpeakersSection() {
         className="flex items-stretch gap-5 sm:gap-6 overflow-x-auto scrollbar-none cursor-grab active:cursor-grabbing select-none py-4 px-4"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {DISPLAY_SPEAKERS.map((speaker, idx) => (
-          <div
-            key={`${speaker.name}-${idx}`}
-            className="flex-shrink-0 w-[300px] sm:w-[340px] md:w-[360px] p-6 rounded-3xl bg-[#0D1B33]/85 border border-[#00E5FF]/20 hover:border-[#00E5FF]/60 backdrop-blur-md shadow-[0_12px_36px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col text-left group relative"
-          >
-            {/* Top row: Avatar + Role badge / Tag */}
-            <div className="flex items-start justify-between gap-3 mb-4">
-              <div
-                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr ${speaker.accentGradient} p-[2px] shadow-[0_0_24px_rgba(0,229,255,0.25)] group-hover:shadow-[0_0_32px_rgba(0,229,255,0.45)] transition-shadow flex-shrink-0`}
-              >
-                <div className="w-full h-full rounded-[14px] bg-[#0A1428] flex items-center justify-center">
-                  <span className="font-sora font-extrabold text-xl sm:text-2xl text-white tracking-wider">
-                    {speaker.initials}
+        {DISPLAY_SPEAKERS.map((speaker, idx) => {
+          const hasPhoto = Boolean(speaker.photoUrl && !imgErrors[speaker.id])
+
+          return (
+            <div
+              key={`${speaker.name}-${idx}`}
+              className="flex-shrink-0 w-[300px] sm:w-[340px] md:w-[360px] p-6 rounded-3xl bg-[#0D1B33]/85 border border-[#00E5FF]/20 hover:border-[#00E5FF]/60 backdrop-blur-md shadow-[0_12px_36px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col text-left group relative"
+            >
+              {/* Top row: Interactive Photo/Avatar Button + Role badge / Tag */}
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <button
+                  type="button"
+                  onClick={() => handleOpenSpeaker(speaker)}
+                  aria-label={`Ver mais sobre ${speaker.name} - abrir descrição completa`}
+                  className={`group/avatar relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr ${speaker.accentGradient} p-[2px] shadow-[0_0_24px_rgba(0,229,255,0.25)] hover:shadow-[0_0_36px_rgba(0,229,255,0.7)] transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#00E5FF] focus:ring-offset-2 focus:ring-offset-[#050A15] cursor-pointer flex-shrink-0 text-left`}
+                >
+                  <div className="w-full h-full rounded-[14px] bg-[#0A1428] overflow-hidden flex items-center justify-center relative">
+                    {hasPhoto ? (
+                      <img
+                        src={speaker.photoUrl}
+                        alt={`Foto de ${speaker.name}`}
+                        onError={() => handleImageError(speaker.id)}
+                        className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/avatar:scale-110"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="font-sora font-extrabold text-xl sm:text-2xl text-white tracking-wider">
+                        {speaker.initials}
+                      </span>
+                    )}
+
+                    {/* Subtle hover overlay badge showing it's interactive */}
+                    <div className="absolute inset-0 bg-[#0057FF]/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
+                      <ExternalLink className="w-4 h-4 text-white drop-shadow" />
+                    </div>
+                  </div>
+
+                  {/* Little click hint indicator dot */}
+                  <span
+                    className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#00E5FF] text-[#050A15] flex items-center justify-center text-[9px] font-bold shadow-[0_0_8px_rgba(0,229,255,0.8)] border border-[#050A15]"
+                    title="Clique para ver a descrição completa"
+                    aria-hidden="true"
+                  >
+                    +
                   </span>
+                </button>
+
+                <div className="flex flex-col items-end gap-1.5 flex-1 min-w-0">
+                  {speaker.badgeRole ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF] text-[10px] sm:text-[11px] font-semibold text-right leading-tight shadow-sm">
+                      <Sparkles className="w-3 h-3 text-[#00E5FF] shrink-0" />
+                      {speaker.badgeRole}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#8FA3BF] text-[10px] font-medium tracking-wide uppercase">
+                      Palestrante Confirmado
+                    </span>
+                  )}
+                  {speaker.location && (
+                    <span className="inline-flex items-center gap-1 text-[11px] text-[#8FA3BF] font-medium">
+                      <MapPin className="w-3 h-3 text-[#00E5FF] shrink-0" />
+                      {speaker.location}
+                    </span>
+                  )}
                 </div>
               </div>
 
-              <div className="flex flex-col items-end gap-1.5 flex-1 min-w-0">
-                {speaker.badgeRole ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF] text-[10px] sm:text-[11px] font-semibold text-right leading-tight shadow-sm">
-                    <Sparkles className="w-3 h-3 text-[#00E5FF] shrink-0" />
-                    {speaker.badgeRole}
+              {/* Speaker Name (Verbatim) - Clickable to open description too */}
+              <button
+                type="button"
+                onClick={() => handleOpenSpeaker(speaker)}
+                className="text-left font-sora font-extrabold text-lg sm:text-xl text-white hover:text-[#00E5FF] tracking-tight mb-1.5 leading-snug transition-colors group-hover:underline underline-offset-4 decoration-[#00E5FF]/40"
+              >
+                {speaker.name}
+              </button>
+
+              {/* Headline / Especialidades */}
+              <p className="text-[#00E5FF] text-xs sm:text-[13px] font-medium leading-relaxed mb-3">
+                {speaker.headline}
+              </p>
+
+              {/* Talk Topic (se houver tema oficial de palestra) */}
+              {speaker.talkTopic && (
+                <div className="mb-3.5 p-3 rounded-xl bg-[#050A15]/70 border border-[#00E5FF]/25">
+                  <span className="text-[10px] font-semibold tracking-wider uppercase text-[#8FA3BF] block mb-1">
+                    Tema da Palestra
                   </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#8FA3BF] text-[10px] font-medium tracking-wide uppercase">
-                    Palestrante Confirmado
-                  </span>
-                )}
-                {speaker.location && (
-                  <span className="inline-flex items-center gap-1 text-[11px] text-[#8FA3BF] font-medium">
-                    <MapPin className="w-3 h-3 text-[#00E5FF] shrink-0" />
-                    {speaker.location}
-                  </span>
-                )}
+                  <p className="font-sora font-bold text-xs sm:text-[13px] text-white tracking-tight leading-snug">
+                    {speaker.talkTopic}
+                  </p>
+                </div>
+              )}
+
+              {/* Bio summary */}
+              <p className="text-[#C7D6EA] text-xs sm:text-[13px] leading-relaxed font-normal mb-3.5 line-clamp-3">
+                {speaker.bio}
+              </p>
+
+              {/* Action hint button to open full description */}
+              <div className="mb-3">
+                <button
+                  type="button"
+                  onClick={() => handleOpenSpeaker(speaker)}
+                  className="inline-flex items-center gap-1.5 text-xs text-[#00E5FF] hover:text-white font-medium transition-colors hover:underline"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-[#00E5FF]" />
+                  <span>Ver perfil e descrição completa</span>
+                </button>
+              </div>
+
+              {/* Credentials / Destaques */}
+              <div className="mt-auto pt-3 border-t border-white/10 flex items-start gap-2">
+                <Award className="w-3.5 h-3.5 text-[#00E5FF] shrink-0 mt-0.5" />
+                <p className="text-[11px] sm:text-xs text-[#8FA3BF] leading-snug font-medium">
+                  {speaker.credentials}
+                </p>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Speaker Details Modal / Dialog Overlay */}
+      {selectedSpeaker && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          aria-describedby={descId}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 animate-fade-in"
+        >
+          {/* Backdrop with dark translucent glassmorphism */}
+          <div
+            onClick={handleCloseModal}
+            className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity"
+            aria-hidden="true"
+          />
+
+          {/* Modal Container */}
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-[#0A1428]/95 border border-[#00E5FF]/40 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_40px_rgba(0,229,255,0.2)] p-6 sm:p-8 text-left z-10 scrollbar-thin scrollbar-thumb-[#00E5FF]/20">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={handleCloseModal}
+              aria-label="Fechar descrição do palestrante"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 rounded-full bg-[#0D1B33] border border-white/15 hover:border-[#00E5FF] text-white hover:text-[#00E5FF] flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-[#00E5FF]"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header: Photo + Main info */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 mb-6 pb-6 border-b border-white/10">
+              {/* Large Photo */}
+              <div
+                className={`w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-gradient-to-tr ${selectedSpeaker.accentGradient} p-[3px] shadow-[0_0_32px_rgba(0,229,255,0.4)] flex-shrink-0`}
+              >
+                <div className="w-full h-full rounded-[21px] bg-[#050A15] overflow-hidden flex items-center justify-center">
+                  {selectedSpeaker.photoUrl && !imgErrors[selectedSpeaker.id] ? (
+                    <img
+                      src={selectedSpeaker.photoUrl}
+                      alt={`Foto de ${selectedSpeaker.name}`}
+                      onError={() => handleImageError(selectedSpeaker.id)}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  ) : (
+                    <span className="font-sora font-extrabold text-3xl sm:text-4xl text-white tracking-wider">
+                      {selectedSpeaker.initials}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Title & Tag Info */}
+              <div className="flex-1 text-center sm:text-left min-w-0">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2.5">
+                  {selectedSpeaker.badgeRole ? (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/40 text-[#00E5FF] text-xs font-semibold shadow-sm">
+                      <Sparkles className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
+                      {selectedSpeaker.badgeRole}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#8FA3BF] text-xs font-medium uppercase tracking-wider">
+                      Palestrante Conecta Summit
+                    </span>
+                  )}
+                  {selectedSpeaker.location && (
+                    <span className="inline-flex items-center gap-1 text-xs text-[#8FA3BF] font-medium bg-[#0D1B33] px-2.5 py-0.5 rounded-full border border-white/10">
+                      <MapPin className="w-3.5 h-3.5 text-[#00E5FF] shrink-0" />
+                      {selectedSpeaker.location}
+                    </span>
+                  )}
+                </div>
+
+                <h3
+                  id={titleId}
+                  className="font-sora font-extrabold text-2xl sm:text-3xl text-white tracking-tight leading-tight mb-2"
+                >
+                  {selectedSpeaker.name}
+                </h3>
+
+                <p className="text-[#00E5FF] text-sm sm:text-base font-medium leading-relaxed">
+                  {selectedSpeaker.headline}
+                </p>
               </div>
             </div>
 
-            {/* Speaker Name (Verbatim) */}
-            <h3 className="font-sora font-extrabold text-lg sm:text-xl text-white tracking-tight mb-1.5 leading-snug">
-              {speaker.name}
-            </h3>
-
-            {/* Headline / Especialidades */}
-            <p className="text-[#00E5FF] text-xs sm:text-[13px] font-medium leading-relaxed mb-3">
-              {speaker.headline}
-            </p>
-
-            {/* Talk Topic (se houver tema oficial de palestra) */}
-            {speaker.talkTopic && (
-              <div className="mb-3.5 p-3 rounded-xl bg-[#050A15]/70 border border-[#00E5FF]/25">
-                <span className="text-[10px] font-semibold tracking-wider uppercase text-[#8FA3BF] block mb-1">
-                  Tema da Palestra
+            {/* Talk Topic Banner */}
+            {selectedSpeaker.talkTopic && (
+              <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-[#0057FF]/20 to-[#00E5FF]/15 border border-[#00E5FF]/40 shadow-inner">
+                <span className="text-[11px] font-bold tracking-widest uppercase text-[#00E5FF] block mb-1">
+                  Tema da Palestra no Conecta Summit 2026
                 </span>
-                <p className="font-sora font-bold text-xs sm:text-[13px] text-white tracking-tight leading-snug">
-                  {speaker.talkTopic}
+                <p className="font-sora font-extrabold text-base sm:text-lg text-white tracking-tight leading-snug">
+                  {selectedSpeaker.talkTopic}
                 </p>
               </div>
             )}
 
-            {/* Bio summary */}
-            <p className="text-[#C7D6EA] text-xs sm:text-[13px] leading-relaxed font-normal mb-3.5 line-clamp-3">
-              {speaker.bio}
-            </p>
+            {/* Full Bio */}
+            <div className="space-y-4 mb-6">
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#8FA3BF] mb-2 flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-[#00E5FF]" />
+                  Sobre o Especialista
+                </h4>
+                <p
+                  id={descId}
+                  className="text-[#C7D6EA] text-sm sm:text-base leading-relaxed font-normal whitespace-pre-line"
+                >
+                  {selectedSpeaker.bio}
+                </p>
+              </div>
 
-            {/* Credentials / Destaques */}
-            <div className="mt-auto pt-3 border-t border-white/10 flex items-start gap-2">
-              <Award className="w-3.5 h-3.5 text-[#00E5FF] shrink-0 mt-0.5" />
-              <p className="text-[11px] sm:text-xs text-[#8FA3BF] leading-snug font-medium">
-                {speaker.credentials}
-              </p>
+              {selectedSpeaker.extra && (
+                <div className="p-3.5 rounded-xl bg-[#0D1B33]/80 border border-white/10">
+                  <p className="text-[#C7D6EA] text-xs sm:text-sm leading-relaxed italic">
+                    {selectedSpeaker.extra}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Credentials / Destaques Footer */}
+            <div className="pt-4 border-t border-white/10 flex items-start gap-2.5 bg-[#050A15]/40 -mx-6 -mb-6 sm:-mx-8 sm:-mb-8 p-6 sm:p-8 rounded-b-3xl">
+              <Award className="w-5 h-5 text-[#00E5FF] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8FA3BF] block mb-1">
+                  Credenciais & Reconhecimento
+                </span>
+                <p className="text-xs sm:text-sm text-white font-medium leading-snug">
+                  {selectedSpeaker.credentials}
+                </p>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </section>
   )
 }
