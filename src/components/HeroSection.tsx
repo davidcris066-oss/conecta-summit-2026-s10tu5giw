@@ -88,7 +88,7 @@ export function HeroSection({ onRegisterClick, onExploreClick }: HeroSectionProp
         {/* Main Title (Verbatim) */}
         <h1
           id="hero-title"
-          className="font-sora font-extrabold text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-[-0.03em] leading-[1.08] max-w-3xl mb-5"
+          className="font-sora font-extrabold uppercase text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight sm:tracking-[-0.01em] leading-[1.08] max-w-3xl mb-5"
         >
           O futuro também se conecta aqui.
         </h1>
@@ -104,7 +104,7 @@ export function HeroSection({ onRegisterClick, onExploreClick }: HeroSectionProp
           <button
             type="button"
             onClick={onRegisterClick}
-            className="w-full sm:w-auto min-h-[48px] px-8 py-3.5 rounded-full bg-gradient-to-r from-[#0057FF] to-[#00E5FF] hover:from-[#004AD6] hover:to-[#00D0E8] text-white font-semibold text-base tracking-wide shadow-[0_8px_28px_rgba(0,87,255,0.45)] hover:shadow-[0_12px_36px_rgba(0,229,255,0.5)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto min-h-[48px] px-8 py-3.5 rounded-full bg-gradient-to-r from-[#0057FF] to-[#00E5FF] hover:from-[#004AD6] hover:to-[#00D0E8] text-white font-semibold uppercase text-sm sm:text-base tracking-wider shadow-[0_8px_28px_rgba(0,87,255,0.45)] hover:shadow-[0_12px_36px_rgba(0,229,255,0.5)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
           >
             <span>Garantir meu lugar</span>
             <ArrowRight className="w-4 h-4" />
@@ -113,7 +113,7 @@ export function HeroSection({ onRegisterClick, onExploreClick }: HeroSectionProp
           <button
             type="button"
             onClick={onExploreClick}
-            className="w-full sm:w-auto min-h-[48px] px-7 py-3.5 rounded-full bg-transparent border border-[#00E5FF]/70 hover:border-[#00E5FF] hover:bg-[#00E5FF]/10 text-white font-semibold text-base tracking-wide transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto min-h-[48px] px-7 py-3.5 rounded-full bg-transparent border border-[#00E5FF]/70 hover:border-[#00E5FF] hover:bg-[#00E5FF]/10 text-white font-semibold uppercase text-sm sm:text-base tracking-wider transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2"
           >
             <span>Descobrir a experiência</span>
           </button>

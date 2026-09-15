@@ -68,7 +68,7 @@ export function FaqSection() {
           </span>
           <h2
             id="faq-title"
-            className="font-sora font-extrabold text-2xl sm:text-4xl lg:text-5xl text-white tracking-[-0.02em] leading-[1.15] mb-5"
+            className="font-sora font-extrabold uppercase text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight sm:tracking-[-0.01em] leading-[1.15] mb-5"
           >
             Perguntas frequentes
           </h2>
@@ -101,7 +101,7 @@ export function FaqSection() {
                   onClick={() => toggleItem(faq.id)}
                   className="w-full min-h-[52px] sm:min-h-[58px] px-5 sm:px-6 py-4 flex items-center justify-between text-left gap-4 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#00E5FF]"
                 >
-                  <span className="font-sora font-semibold text-white text-base sm:text-lg tracking-tight">
+                  <span className="font-sora font-semibold uppercase text-white text-sm sm:text-base tracking-tight leading-snug">
                     {faq.question}
                   </span>
                   <div

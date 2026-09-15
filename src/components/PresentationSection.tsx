@@ -15,7 +15,7 @@ export function PresentationSection() {
           </span>
           <h2
             id="apresentacao-title"
-            className="font-sora font-extrabold text-2xl sm:text-4xl lg:text-5xl text-white tracking-[-0.02em] leading-[1.15]"
+            className="font-sora font-extrabold uppercase text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight sm:tracking-[-0.01em] leading-[1.15]"
           >
             Um ambiente criado para gerar movimento.
           </h2>
@@ -36,7 +36,7 @@ export function PresentationSection() {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057FF]/30 to-[#00E5FF]/20 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF]">
                 <Layers className="w-5 h-5" />
               </div>
-              <span className="font-sora font-semibold text-white text-base">
+              <span className="font-sora font-semibold uppercase text-white text-sm sm:text-base tracking-wide">
                 Conteúdo aplicável
               </span>
             </div>
@@ -46,7 +46,9 @@ export function PresentationSection() {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057FF]/30 to-[#00E5FF]/20 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF]">
                 <Network className="w-5 h-5" />
               </div>
-              <span className="font-sora font-semibold text-white text-base">Conexões reais</span>
+              <span className="font-sora font-semibold uppercase text-white text-sm sm:text-base tracking-wide">
+                Conexões reais
+              </span>
             </div>
 
             {/* Highlight 3: Experiência premium */}
@@ -54,7 +56,7 @@ export function PresentationSection() {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0057FF]/30 to-[#00E5FF]/20 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF]">
                 <Award className="w-5 h-5" />
               </div>
-              <span className="font-sora font-semibold text-white text-base">
+              <span className="font-sora font-semibold uppercase text-white text-sm sm:text-base tracking-wide">
                 Experiência premium
               </span>
             </div>

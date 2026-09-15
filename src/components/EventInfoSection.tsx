@@ -25,7 +25,7 @@ export function EventInfoSection() {
           </span>
           <h2
             id="info-title"
-            className="font-sora font-extrabold text-2xl sm:text-4xl text-white tracking-[-0.02em] mb-10 sm:mb-12"
+            className="font-sora font-extrabold uppercase text-2xl sm:text-4xl text-white tracking-tight sm:tracking-[-0.01em] mb-10 sm:mb-12"
           >
             Informações do Evento
           </h2>
@@ -40,7 +40,7 @@ export function EventInfoSection() {
               <span className="text-xs uppercase tracking-wider text-[#8FA3BF] font-medium mb-1">
                 Data
               </span>
-              <strong className="font-sora font-bold text-lg sm:text-xl text-white">
+              <strong className="font-sora font-bold uppercase text-base sm:text-lg text-white">
                 28/11/2026
               </strong>
             </div>
@@ -53,7 +53,7 @@ export function EventInfoSection() {
               <span className="text-xs uppercase tracking-wider text-[#8FA3BF] font-medium mb-1">
                 Horário
               </span>
-              <strong className="font-sora font-bold text-lg sm:text-xl text-white">
+              <strong className="font-sora font-bold uppercase text-base sm:text-lg text-white">
                 09h às 18h
               </strong>
             </div>
@@ -66,7 +66,7 @@ export function EventInfoSection() {
               <span className="text-xs uppercase tracking-wider text-[#8FA3BF] font-medium mb-1">
                 Cidade
               </span>
-              <strong className="font-sora font-bold text-lg sm:text-xl text-white">
+              <strong className="font-sora font-bold uppercase text-base sm:text-lg text-white">
                 Itaituba
               </strong>
             </div>
@@ -79,7 +79,9 @@ export function EventInfoSection() {
               <span className="text-xs uppercase tracking-wider text-[#8FA3BF] font-medium mb-1">
                 Estado
               </span>
-              <strong className="font-sora font-bold text-lg sm:text-xl text-white">Pará</strong>
+              <strong className="font-sora font-bold uppercase text-base sm:text-lg text-white">
+                Pará
+              </strong>
             </div>
           </div>
         </div>

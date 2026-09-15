@@ -256,7 +256,7 @@ export function SpeakersSection() {
         </span>
         <h2
           id="palestrantes-title"
-          className="font-sora font-extrabold text-2xl sm:text-4xl lg:text-5xl text-white tracking-[-0.02em] leading-[1.15] mb-5"
+          className="font-sora font-extrabold uppercase text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight sm:tracking-[-0.01em] leading-[1.15] mb-5"
         >
           Encontros com quem transforma conhecimento em ação.
         </h2>

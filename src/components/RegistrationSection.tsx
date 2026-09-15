@@ -220,7 +220,7 @@ export function RegistrationSection() {
 
           <h2
             id="inscricao-title"
-            className="font-sora font-extrabold text-2xl sm:text-4xl lg:text-5xl text-white tracking-[-0.02em] leading-[1.12] mb-3"
+            className="font-sora font-extrabold uppercase text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight sm:tracking-[-0.01em] leading-[1.12] mb-3"
           >
             A conexão que pode mudar sua história começa aqui.
           </h2>
@@ -412,7 +412,7 @@ export function RegistrationSection() {
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-3 w-full min-h-[52px] sm:min-h-[56px] px-8 py-4 rounded-full bg-gradient-to-r from-[#0057FF] to-[#00E5FF] hover:from-[#004AD6] hover:to-[#00D0E8] text-white font-sora font-bold text-base sm:text-lg tracking-wide shadow-[0_8px_30px_rgba(0,87,255,0.45)] hover:shadow-[0_12px_40px_rgba(0,229,255,0.5)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer"
+                className="mt-3 w-full min-h-[52px] sm:min-h-[56px] px-8 py-4 rounded-full bg-gradient-to-r from-[#0057FF] to-[#00E5FF] hover:from-[#004AD6] hover:to-[#00D0E8] text-white font-sora font-bold uppercase text-sm sm:text-base tracking-wider shadow-[0_8px_30px_rgba(0,87,255,0.45)] hover:shadow-[0_12px_40px_rgba(0,229,255,0.5)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>
@@ -593,7 +593,7 @@ export function RegistrationSection() {
               <button
                 type="button"
                 onClick={() => setStep('pending')}
-                className="w-full min-h-[52px] sm:min-h-[56px] px-8 py-4 rounded-full bg-gradient-to-r from-[#00E5A8] to-[#00E5FF] hover:opacity-95 text-[#050A15] font-sora font-extrabold text-base tracking-wide shadow-[0_8px_30px_rgba(0,229,168,0.35)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full min-h-[52px] sm:min-h-[56px] px-8 py-4 rounded-full bg-gradient-to-r from-[#00E5A8] to-[#00E5FF] hover:opacity-95 text-[#050A15] font-sora font-extrabold uppercase text-sm sm:text-base tracking-wider shadow-[0_8px_30px_rgba(0,229,168,0.35)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Já realizei o pagamento via Pix</span>
                 <ArrowRight className="w-5 h-5 stroke-[2.5]" />
@@ -628,7 +628,7 @@ export function RegistrationSection() {
               <span>Status: Pendente de Confirmação</span>
             </div>
 
-            <h3 className="font-sora font-extrabold text-2xl sm:text-3xl text-white mb-3">
+            <h3 className="font-sora font-extrabold uppercase text-xl sm:text-2xl md:text-3xl text-white mb-3">
               Inscrição enviada com sucesso!
             </h3>
 

@@ -42,7 +42,7 @@ export function JourneySection() {
         </span>
         <h2
           id="jornada-title"
-          className="font-sora font-extrabold text-2xl sm:text-4xl lg:text-5xl text-white tracking-[-0.02em] leading-[1.15]"
+          className="font-sora font-extrabold uppercase text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight sm:tracking-[-0.01em] leading-[1.15]"
         >
           A Jornada do Participante
         </h2>
@@ -78,7 +78,7 @@ export function JourneySection() {
                 </div>
 
                 {/* Title (Verbatim) */}
-                <h3 className="font-sora font-bold text-xl sm:text-2xl text-white tracking-tight mb-3">
+                <h3 className="font-sora font-bold uppercase text-lg sm:text-xl text-white tracking-tight mb-3">
                   {step.title}
                 </h3>
 
