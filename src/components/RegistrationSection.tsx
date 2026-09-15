@@ -490,16 +490,19 @@ export function RegistrationSection() {
 
               {/* QR Code Oficial Sicredi */}
               <div className="mb-6 flex flex-col items-center w-full">
-                <div className="relative group max-w-[280px] sm:max-w-[320px] w-full rounded-2xl bg-white p-3 sm:p-4 shadow-[0_15px_45px_rgba(0,0,0,0.65),0_0_35px_rgba(0,229,255,0.3)] border-2 border-[#00E5FF]/40 transition-transform duration-300 hover:scale-[1.01]">
+                <div className="relative group w-[260px] h-[260px] sm:w-[300px] sm:h-[300px] rounded-2xl bg-white p-3 sm:p-4 shadow-[0_15px_45px_rgba(0,0,0,0.65),0_0_35px_rgba(0,229,255,0.3)] border-2 border-[#00E5FF]/40 transition-transform duration-300 hover:scale-[1.01] flex items-center justify-center overflow-hidden">
                   {!imageError ? (
-                    <img
-                      src={sicrediPixQrCodeImg}
-                      alt="QR Code Pix oficial do Conecta Summit 2026 - Sicredi"
-                      className="w-full h-auto object-contain rounded-xl block mx-auto"
-                      onError={() => setImageError(true)}
-                    />
+                    <div className="relative w-full h-full overflow-hidden rounded-xl bg-white flex items-center justify-center">
+                      <img
+                        src={sicrediPixQrCodeImg}
+                        alt="QR Code Pix oficial do Conecta Summit 2026 - Sicredi"
+                        className="absolute w-[240%] max-w-none h-auto select-none pointer-events-none transform -translate-y-[35%]"
+                        style={{ imageRendering: 'auto' }}
+                        onError={() => setImageError(true)}
+                      />
+                    </div>
                   ) : (
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center justify-center w-full h-full">
                       <QrCode
                         value={pixPayload}
                         size={220}
