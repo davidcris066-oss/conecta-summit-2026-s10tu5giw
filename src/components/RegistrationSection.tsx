@@ -16,6 +16,7 @@ import {
 import pb from '@/lib/pocketbase/client'
 import { BANK_DETAILS, TICKET_PRICE, getOfficialPixPayload } from '@/lib/pix'
 import { QrCode } from './QrCode'
+import sicrediPixQrCodeImg from '@/assets/whatsapp-image-2026-09-15-at-11.29.07-b92d4.jpeg'
 
 type Step = 'form' | 'payment' | 'pending'
 
@@ -42,6 +43,7 @@ export function RegistrationSection() {
   }>({})
   const [copied, setCopied] = useState(false)
   const [savedData, setSavedData] = useState<SavedRegistration | null>(null)
+  const [imageError, setImageError] = useState(false)
 
   const nomeId = useId()
   const emailId = useId()
@@ -486,15 +488,28 @@ export function RegistrationSection() {
                 </div>
               </div>
 
-              {/* QR Code */}
-              <div className="mb-6 flex flex-col items-center">
-                <QrCode
-                  value={pixPayload}
-                  size={200}
-                  alt="QR Code Pix do Conecta Summit 2026 - ASEII"
-                />
-                <span className="text-xs text-[#8FA3BF] mt-3">
-                  Aponte a câmera do seu app bancário para o código acima
+              {/* QR Code Oficial Sicredi */}
+              <div className="mb-6 flex flex-col items-center w-full">
+                <div className="relative group max-w-[280px] sm:max-w-[320px] w-full rounded-2xl bg-white p-3 sm:p-4 shadow-[0_15px_45px_rgba(0,0,0,0.65),0_0_35px_rgba(0,229,255,0.3)] border-2 border-[#00E5FF]/40 transition-transform duration-300 hover:scale-[1.01]">
+                  {!imageError ? (
+                    <img
+                      src={sicrediPixQrCodeImg}
+                      alt="QR Code Pix oficial do Conecta Summit 2026 - Sicredi"
+                      className="w-full h-auto object-contain rounded-xl block mx-auto"
+                      onError={() => setImageError(true)}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <QrCode
+                        value={pixPayload}
+                        size={220}
+                        alt="QR Code Pix oficial do Conecta Summit 2026 - Sicredi"
+                      />
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs text-[#8FA3BF] mt-3.5 text-center">
+                  Aponte a câmera do seu celular ou app bancário para o Código QR acima
                 </span>
               </div>
 
