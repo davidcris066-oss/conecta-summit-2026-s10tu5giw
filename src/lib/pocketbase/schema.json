@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14T18:41:10.765Z",
+  "generatedAt": "2026-09-15T13:27:57.536Z",
   "collections": [
     {
       "name": "users",
@@ -86,6 +86,19 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["pendente", "confirmado", "cancelado"]
+        },
+        {
+          "name": "valor",
+          "type": "number",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": [
