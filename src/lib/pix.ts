@@ -37,12 +37,50 @@ export const BANK_DETAILS = {
   merchantCity: 'ITAITUBA',
 } as const
 
+export type TicketTierKey = 'vip' | 'premium' | 'start'
+
+export interface TicketTier {
+  id: TicketTierKey
+  name: string
+  label: string
+  price: number
+  priceFormatted: string
+  supportText: string
+}
+
+export const TICKET_TIERS: Record<TicketTierKey, TicketTier> = {
+  vip: {
+    id: 'vip',
+    name: 'VIP',
+    label: 'INGRESSO VIP',
+    price: 3435.05,
+    priceFormatted: 'R$ 3.435,05',
+    supportText: 'Ingresso VIP',
+  },
+  premium: {
+    id: 'premium',
+    name: 'Premium',
+    label: 'INGRESSO PREMIUM',
+    price: 3091.55,
+    priceFormatted: 'R$ 3.091,55',
+    supportText: 'Ingresso Premium',
+  },
+  start: {
+    id: 'start',
+    name: 'Start',
+    label: 'INGRESSO START',
+    price: 2919.79,
+    priceFormatted: 'R$ 2.919,79',
+    supportText: 'Ingresso Start',
+  },
+} as const
+
+export const DEFAULT_TIER_KEY: TicketTierKey = 'vip'
+
 /**
- * Preço do ingresso em Reais.
- * Se 0 ou indefinido, o usuário insere o valor no aplicativo do banco e o payload PIX é gerado sem valor fixo.
- * Quando o valor for definido oficialmente pela organização, basta atualizar esta constante (ex.: 150.00).
+ * Preço padrão de referência (ou do plano padrão)
  */
-export const TICKET_PRICE: number = 0
+export const TICKET_PRICE: number = TICKET_TIERS[DEFAULT_TIER_KEY].price
 
 function removeAccents(str: string): string {
   return str

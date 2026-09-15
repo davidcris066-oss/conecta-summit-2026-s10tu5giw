@@ -28,7 +28,9 @@ import {
   getCurrentAdminUser,
   type InscricaoRecord,
   type InscricaoStatus,
+  type InscricaoPlano,
 } from '@/services/inscricoes'
+import { TICKET_TIERS, type TicketTierKey } from '@/lib/pix'
 import pb from '@/lib/pocketbase/client'
 import { useToast } from '@/hooks/use-toast'
 
@@ -50,6 +52,7 @@ export default function AdminPage() {
   const [loadingData, setLoadingData] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'todos' | InscricaoStatus>('todos')
+  const [planoFilter, setPlanoFilter] = useState<'todos' | InscricaoPlano>('todos')
   const [updatingId, setUpdatingId] = useState<string | null>(null)
 
   // Escutar mudanças no authStore
@@ -163,20 +166,60 @@ export default function AdminPage() {
   const confirmadasCount = inscricoes.filter((i) => i.status === 'confirmado').length
   const canceladasCount = inscricoes.filter((i) => i.status === 'cancelado').length
 
+  // Contadores por plano
+  const vipCount = inscricoes.filter((i) => i.plano?.toLowerCase() === 'vip').length
+  const premiumCount = inscricoes.filter((i) => i.plano?.toLowerCase() === 'premium').length
+  const startCount = inscricoes.filter((i) => i.plano?.toLowerCase() === 'start').length
+
+  // Helper para renderizar badge de plano
+  const getPlanoBadge = (plano?: string) => {
+    const p = plano?.toLowerCase()
+    if (p === 'vip') {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-amber-400/20 to-yellow-500/20 text-amber-300 border border-amber-400/40 shadow-[0_0_12px_rgba(251,191,36,0.2)]">
+          VIP
+        </span>
+      )
+    }
+    if (p === 'premium') {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/40 shadow-[0_0_12px_rgba(0,229,255,0.2)]">
+          Premium
+        </span>
+      )
+    }
+    if (p === 'start') {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0057FF]/25 text-[#7CA7FF] border border-[#0057FF]/40">
+          Start
+        </span>
+      )
+    }
+    return (
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-[#8FA3BF] bg-white/5 border border-white/10">
+        -
+      </span>
+    )
+  }
+
   // Filtragem e busca
   const filteredInscricoes = useMemo(() => {
     return inscricoes.filter((item) => {
       const matchesSearch =
         item.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.telefone?.toLowerCase().includes(searchTerm.toLowerCase())
+        item.telefone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.plano?.toLowerCase().includes(searchTerm.toLowerCase())
 
       const itemStatus = item.status || 'pendente'
       const matchesStatus = statusFilter === 'todos' || itemStatus === statusFilter
 
-      return matchesSearch && matchesStatus
+      const itemPlano = item.plano?.toLowerCase()
+      const matchesPlano = planoFilter === 'todos' || itemPlano === planoFilter
+
+      return matchesSearch && matchesStatus && matchesPlano
     })
-  }, [inscricoes, searchTerm, statusFilter])
+  }, [inscricoes, searchTerm, statusFilter, planoFilter])
 
   // Formatação de data
   const formatDate = (isoString?: string) => {
@@ -410,15 +453,15 @@ export default function AdminPage() {
         </div>
 
         {/* Filtros e Busca */}
-        <div className="p-4 rounded-2xl bg-[#0D1B33]/70 border border-[#00E5FF]/20 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
-          {/* Busca por Nome, Email ou WhatsApp */}
-          <div className="relative flex-1">
+        <div className="p-4 rounded-2xl bg-[#0D1B33]/70 border border-[#00E5FF]/20 flex flex-col gap-3">
+          {/* Linha superior: Busca */}
+          <div className="relative w-full">
             <Search className="w-4 h-4 text-[#8FA3BF] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar por nome, e-mail ou WhatsApp..."
+              placeholder="Buscar por nome, e-mail, WhatsApp ou plano..."
               className="w-full min-h-[44px] pl-10 pr-4 py-2 rounded-xl bg-[#050A15]/90 border border-white/10 text-white placeholder-[#8FA3BF] text-sm focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]/50 outline-none transition-all"
             />
             {searchTerm && (
@@ -431,37 +474,72 @@ export default function AdminPage() {
             )}
           </div>
 
-          {/* Filtro por Status */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-            <span className="text-xs text-[#8FA3BF] font-semibold uppercase tracking-wider pl-1 pr-1 hidden sm:inline">
-              Status:
-            </span>
-            {(['todos', 'pendente', 'confirmado', 'cancelado'] as const).map((st) => {
-              const active = statusFilter === st
-              return (
-                <button
-                  key={st}
-                  onClick={() => setStatusFilter(st)}
-                  className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-semibold capitalize transition-all cursor-pointer whitespace-nowrap ${
-                    active
-                      ? st === 'confirmado'
-                        ? 'bg-[#00E5A8] text-[#050A15] shadow-[0_0_15px_rgba(0,229,168,0.3)]'
-                        : st === 'pendente'
-                          ? 'bg-amber-400 text-[#050A15] shadow-[0_0_15px_rgba(251,191,36,0.3)]'
-                          : st === 'cancelado'
-                            ? 'bg-[#FF5C7A] text-white shadow-[0_0_15px_rgba(255,92,122,0.3)]'
-                            : 'bg-[#00E5FF] text-[#050A15] shadow-[0_0_15px_rgba(0,229,255,0.3)]'
-                      : 'bg-[#050A15]/80 hover:bg-white/10 text-[#C7D6EA] border border-white/10'
-                  }`}
-                >
-                  {st === 'todos' ? 'Todos' : st}
-                  {st === 'todos' && ` (${totalCount})`}
-                  {st === 'pendente' && ` (${pendentesCount})`}
-                  {st === 'confirmado' && ` (${confirmadasCount})`}
-                  {st === 'cancelado' && ` (${canceladasCount})`}
-                </button>
-              )
-            })}
+          {/* Linha inferior: Filtros por Status e Plano */}
+          <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between pt-1 border-t border-white/5">
+            {/* Filtro por Status */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0 scrollbar-none">
+              <span className="text-xs text-[#8FA3BF] font-semibold uppercase tracking-wider pl-1 pr-1 shrink-0">
+                Status:
+              </span>
+              {(['todos', 'pendente', 'confirmado', 'cancelado'] as const).map((st) => {
+                const active = statusFilter === st
+                return (
+                  <button
+                    key={st}
+                    onClick={() => setStatusFilter(st)}
+                    className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-semibold capitalize transition-all cursor-pointer whitespace-nowrap ${
+                      active
+                        ? st === 'confirmado'
+                          ? 'bg-[#00E5A8] text-[#050A15] shadow-[0_0_15px_rgba(0,229,168,0.3)]'
+                          : st === 'pendente'
+                            ? 'bg-amber-400 text-[#050A15] shadow-[0_0_15px_rgba(251,191,36,0.3)]'
+                            : st === 'cancelado'
+                              ? 'bg-[#FF5C7A] text-white shadow-[0_0_15px_rgba(255,92,122,0.3)]'
+                              : 'bg-[#00E5FF] text-[#050A15] shadow-[0_0_15px_rgba(0,229,255,0.3)]'
+                        : 'bg-[#050A15]/80 hover:bg-white/10 text-[#C7D6EA] border border-white/10'
+                    }`}
+                  >
+                    {st === 'todos' ? 'Todos' : st}
+                    {st === 'todos' && ` (${totalCount})`}
+                    {st === 'pendente' && ` (${pendentesCount})`}
+                    {st === 'confirmado' && ` (${confirmadasCount})`}
+                    {st === 'cancelado' && ` (${canceladasCount})`}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Filtro por Plano */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0 scrollbar-none">
+              <span className="text-xs text-[#8FA3BF] font-semibold uppercase tracking-wider pl-1 pr-1 shrink-0">
+                Plano:
+              </span>
+              {(['todos', 'vip', 'premium', 'start'] as const).map((pl) => {
+                const active = planoFilter === pl
+                return (
+                  <button
+                    key={pl}
+                    onClick={() => setPlanoFilter(pl)}
+                    className={`min-h-[40px] px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
+                      active
+                        ? pl === 'vip'
+                          ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-[#050A15] shadow-[0_0_15px_rgba(251,191,36,0.35)] font-bold'
+                          : pl === 'premium'
+                            ? 'bg-[#00E5FF] text-[#050A15] shadow-[0_0_15px_rgba(0,229,255,0.35)] font-bold'
+                            : pl === 'start'
+                              ? 'bg-[#0057FF] text-white shadow-[0_0_15px_rgba(0,87,255,0.35)] font-bold'
+                              : 'bg-white text-[#050A15] font-bold'
+                        : 'bg-[#050A15]/80 hover:bg-white/10 text-[#C7D6EA] border border-white/10'
+                    }`}
+                  >
+                    {pl === 'todos' ? 'Todos os Planos' : pl}
+                    {pl === 'vip' && ` (${vipCount})`}
+                    {pl === 'premium' && ` (${premiumCount})`}
+                    {pl === 'start' && ` (${startCount})`}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
 
@@ -492,6 +570,7 @@ export default function AdminPage() {
                   <thead>
                     <tr className="border-b border-white/10 bg-[#050A15]/60 text-[11px] uppercase tracking-wider text-[#8FA3BF] font-semibold">
                       <th className="py-3.5 px-4">Participante</th>
+                      <th className="py-3.5 px-4">Plano</th>
                       <th className="py-3.5 px-4">Contato</th>
                       <th className="py-3.5 px-4">Data</th>
                       <th className="py-3.5 px-4">Valor</th>
@@ -512,6 +591,11 @@ export default function AdminPage() {
                             <div className="text-[11px] text-[#8FA3BF] font-mono mt-0.5">
                               ID: {item.id}
                             </div>
+                          </td>
+
+                          {/* Plano Badge */}
+                          <td className="py-4 px-4 align-middle whitespace-nowrap">
+                            {getPlanoBadge(item.plano)}
                           </td>
 
                           {/* Email e Telefone */}
@@ -619,31 +703,42 @@ export default function AdminPage() {
 
                   return (
                     <div key={item.id} className="p-4 flex flex-col gap-3">
-                      {/* Topo do card: Nome e Status */}
+                      {/* Topo do card: Nome, Plano e Status */}
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <div className="font-semibold text-white text-base">{item.nome}</div>
                           <div className="text-[11px] text-[#8FA3BF] font-mono">ID: {item.id}</div>
                         </div>
 
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${
-                            itemStatus === 'confirmado'
-                              ? 'bg-[#00E5A8]/15 text-[#00E5A8] border border-[#00E5A8]/30'
-                              : itemStatus === 'cancelado'
-                                ? 'bg-[#FF5C7A]/15 text-[#FF5C7A] border border-[#FF5C7A]/30'
-                                : 'bg-amber-400/15 text-amber-300 border border-amber-400/30'
-                          }`}
-                        >
-                          {itemStatus === 'confirmado' && <CheckCircle2 className="w-3.5 h-3.5" />}
-                          {itemStatus === 'cancelado' && <XCircle className="w-3.5 h-3.5" />}
-                          {itemStatus === 'pendente' && <Clock className="w-3.5 h-3.5" />}
-                          <span className="capitalize">{itemStatus}</span>
-                        </span>
+                        <div className="flex flex-col items-end gap-1.5 shrink-0">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                              itemStatus === 'confirmado'
+                                ? 'bg-[#00E5A8]/15 text-[#00E5A8] border border-[#00E5A8]/30'
+                                : itemStatus === 'cancelado'
+                                  ? 'bg-[#FF5C7A]/15 text-[#FF5C7A] border border-[#FF5C7A]/30'
+                                  : 'bg-amber-400/15 text-amber-300 border border-amber-400/30'
+                            }`}
+                          >
+                            {itemStatus === 'confirmado' && (
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                            )}
+                            {itemStatus === 'cancelado' && <XCircle className="w-3.5 h-3.5" />}
+                            {itemStatus === 'pendente' && <Clock className="w-3.5 h-3.5" />}
+                            <span className="capitalize">{itemStatus}</span>
+                          </span>
+                          <div>{getPlanoBadge(item.plano)}</div>
+                        </div>
                       </div>
 
                       {/* Informações detalhadas */}
                       <div className="bg-[#050A15]/60 rounded-xl p-3 flex flex-col gap-1.5 text-xs">
+                        <div className="flex items-center justify-between text-[#C7D6EA]">
+                          <span className="text-[#8FA3BF]">Plano:</span>
+                          <span className="font-bold text-white uppercase">
+                            {item.plano || '-'}
+                          </span>
+                        </div>
                         <div className="flex items-center justify-between text-[#C7D6EA]">
                           <span className="text-[#8FA3BF]">E-mail:</span>
                           <span className="font-medium truncate max-w-[200px]">{item.email}</span>

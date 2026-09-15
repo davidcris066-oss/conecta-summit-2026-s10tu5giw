@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-15T18:38:31.294Z",
+  "generatedAt": "2026-09-15T19:25:15.260Z",
   "collections": [
     {
       "name": "users",
@@ -99,6 +99,13 @@
           "type": "number",
           "required": false,
           "system": false
+        },
+        {
+          "name": "plano",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["vip", "premium", "start"]
         }
       ],
       "indexes": [

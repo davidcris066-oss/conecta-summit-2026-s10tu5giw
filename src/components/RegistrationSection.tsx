@@ -14,7 +14,13 @@ import {
   RotateCcw,
 } from 'lucide-react'
 import pb from '@/lib/pocketbase/client'
-import { BANK_DETAILS, TICKET_PRICE, getOfficialPixPayload } from '@/lib/pix'
+import {
+  BANK_DETAILS,
+  TICKET_TIERS,
+  DEFAULT_TIER_KEY,
+  type TicketTierKey,
+  getOfficialPixPayload,
+} from '@/lib/pix'
 import { QrCode } from './QrCode'
 import userPixQrCodeImage from '@/assets/pix-qr-code.svg'
 
@@ -25,11 +31,14 @@ interface SavedRegistration {
   nome: string
   email: string
   telefone: string
+  plano?: TicketTierKey
+  valor?: number
   created?: string
 }
 
 export function RegistrationSection() {
   const [step, setStep] = useState<Step>('form')
+  const [selectedPlan, setSelectedPlan] = useState<TicketTierKey>(DEFAULT_TIER_KEY)
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [telefone, setTelefone] = useState('')
@@ -102,21 +111,21 @@ export function RegistrationSection() {
     setLoading(true)
 
     try {
+      const currentTier = TICKET_TIERS[selectedPlan]
       const payload: {
         nome: string
         email: string
         telefone: string
         status: string
         valor?: number
+        plano?: string
       } = {
         nome: nome.trim(),
         email: email.trim().toLowerCase(),
         telefone: telefone.trim(),
         status: 'pendente',
-      }
-
-      if (TICKET_PRICE > 0) {
-        payload.valor = TICKET_PRICE
+        plano: selectedPlan,
+        valor: currentTier.price,
       }
 
       const record = await pb.collection('inscricoes').create(payload)
@@ -126,6 +135,8 @@ export function RegistrationSection() {
         nome: record.nome || nome.trim(),
         email: record.email || email.trim().toLowerCase(),
         telefone: record.telefone || telefone.trim(),
+        plano: (record.plano as TicketTierKey) || selectedPlan,
+        valor: record.valor || currentTier.price,
         created: record.created,
       })
 
@@ -159,9 +170,14 @@ export function RegistrationSection() {
     }
   }
 
-  // Gera o payload Pix BR Code com dados oficiais
+  // Obtém o plano ativo (do savedData se já salvo, ou da seleção atual)
+  const activePlanKey: TicketTierKey = (savedData?.plano as TicketTierKey) || selectedPlan
+  const activePlan = TICKET_TIERS[activePlanKey] || TICKET_TIERS[DEFAULT_TIER_KEY]
+  const activeAmount = savedData?.valor ?? activePlan.price
+
+  // Gera o payload Pix BR Code com dados oficiais e o valor embutido
   const pixPayload = getOfficialPixPayload(
-    TICKET_PRICE,
+    activeAmount,
     savedData?.id ? savedData.id.slice(0, 15).toUpperCase() : undefined,
   )
 
@@ -299,27 +315,90 @@ export function RegistrationSection() {
            ======================================================== */}
         {step === 'form' && (
           <div className="max-w-2xl mx-auto">
-            {/* Informação sobre o ingresso único */}
+            {/* Seleção de Planos / Tiers */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#00E5FF]">
+                  1. ESCOLHA SEU PLANO DE INGRESSO
+                </span>
+                <span className="text-xs text-[#8FA3BF]">Selecione uma opção</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                {(Object.keys(TICKET_TIERS) as TicketTierKey[]).map((tierKey) => {
+                  const tier = TICKET_TIERS[tierKey]
+                  const isSelected = selectedPlan === tierKey
+
+                  return (
+                    <button
+                      key={tier.id}
+                      type="button"
+                      onClick={() => setSelectedPlan(tierKey)}
+                      className={`relative text-left p-4 sm:p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between cursor-pointer ${
+                        isSelected
+                          ? 'bg-gradient-to-b from-[#0057FF]/25 to-[#00E5FF]/15 border-[#00E5FF] shadow-[0_0_25px_rgba(0,229,255,0.35)] ring-2 ring-[#00E5FF]/40 -translate-y-0.5'
+                          : 'bg-[#050A15]/80 hover:bg-[#0A1428] border-white/10 hover:border-[#00E5FF]/30'
+                      }`}
+                      aria-pressed={isSelected}
+                    >
+                      {/* Indicador de Seleção no Canto */}
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-sora font-extrabold uppercase text-sm sm:text-base tracking-wider text-white">
+                          {tier.name}
+                        </span>
+                        <div
+                          className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
+                            isSelected
+                              ? 'bg-[#00E5FF] text-[#050A15]'
+                              : 'border border-white/25 text-transparent'
+                          }`}
+                        >
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        </div>
+                      </div>
+
+                      {/* Linha Neutra de Apoio */}
+                      <span className="text-xs text-[#8FA3BF] mb-3 block">{tier.supportText}</span>
+
+                      {/* Preço em Destaque */}
+                      <div className="pt-2 border-t border-white/10">
+                        <span className="text-[10px] uppercase tracking-wider text-[#8FA3BF] block">
+                          VALOR
+                        </span>
+                        <span className="font-sora font-extrabold text-lg sm:text-xl text-[#00E5FF]">
+                          {tier.priceFormatted}
+                        </span>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Resumo do Plano Selecionado antes do formulário */}
             <div className="mb-6 p-4 rounded-2xl bg-[#0057FF]/10 border border-[#00E5FF]/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#00E5FF] block">
-                  Ingresso Oficial • Acesso Completo
+                  Plano Selecionado • {TICKET_TIERS[selectedPlan].label}
                 </span>
                 <span className="text-sm text-white font-medium">
                   Conecta Summit 2026 • 28 de Novembro em Itaituba/PA
                 </span>
               </div>
-              <div className="text-right sm:text-right shrink-0">
-                <span className="text-xs text-[#8FA3BF] block">Investimento</span>
-                <span className="font-sora font-extrabold text-lg text-white">
-                  {TICKET_PRICE > 0
-                    ? `R$ ${TICKET_PRICE.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-                    : 'A confirmar'}
+              <div className="text-left sm:text-right shrink-0">
+                <span className="text-xs text-[#8FA3BF] block uppercase tracking-wider">
+                  Investimento
+                </span>
+                <span className="font-sora font-extrabold text-lg sm:text-xl text-white">
+                  {TICKET_TIERS[selectedPlan].priceFormatted}
                 </span>
               </div>
             </div>
 
             <form onSubmit={handleSubmitForm} className="flex flex-col gap-4 text-left" noValidate>
+              <div className="text-xs font-bold uppercase tracking-wider text-[#00E5FF] mb-1">
+                2. PREENCHA SEUS DADOS
+              </div>
               {errorMessage && (
                 <div
                   className="p-4 rounded-xl bg-[#FF5C7A]/15 border border-[#FF5C7A]/40 flex items-start gap-3 text-[#FF5C7A] text-sm animate-fade-in"
@@ -469,21 +548,19 @@ export function RegistrationSection() {
                 escaneie o QR Code ou cole o código copia e cola abaixo.
               </p>
 
-              {/* Valor do Ingresso */}
+              {/* Valor e Plano do Ingresso */}
               <div className="w-full mb-6 p-4 rounded-2xl bg-[#0A1428] border border-white/10 flex items-center justify-between">
                 <div className="text-left">
                   <span className="text-xs text-[#8FA3BF] block uppercase tracking-wider">
-                    Valor da Inscrição
+                    Plano: {activePlan.name}
                   </span>
                   <span className="font-sora font-extrabold text-xl sm:text-2xl text-[#00E5FF]">
-                    {TICKET_PRICE > 0
-                      ? `R$ ${TICKET_PRICE.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-                      : 'Confirme o valor no app do banco'}
+                    {activePlan.priceFormatted}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[11px] px-2.5 py-1 rounded-full bg-[#00E5FF]/10 text-[#00E5FF] font-semibold border border-[#00E5FF]/30">
-                    Ingresso Único
+                  <span className="text-[11px] px-2.5 py-1 rounded-full bg-[#00E5FF]/10 text-[#00E5FF] font-bold uppercase tracking-wider border border-[#00E5FF]/30">
+                    {activePlan.name}
                   </span>
                 </div>
               </div>
@@ -642,6 +719,12 @@ export function RegistrationSection() {
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
                 <span className="text-[#8FA3BF]">Evento:</span>
                 <strong className="text-white">Conecta Summit 2026</strong>
+              </div>
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+                <span className="text-[#8FA3BF]">Plano Escolhido:</span>
+                <strong className="text-[#00E5FF] uppercase font-bold">
+                  {activePlan.name} — {activePlan.priceFormatted}
+                </strong>
               </div>
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
                 <span className="text-[#8FA3BF]">E-mail cadastrado:</span>

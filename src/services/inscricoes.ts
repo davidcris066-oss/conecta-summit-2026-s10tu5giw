@@ -1,6 +1,7 @@
 import pb from '@/lib/pocketbase/client'
 
 export type InscricaoStatus = 'pendente' | 'confirmado' | 'cancelado'
+export type InscricaoPlano = 'vip' | 'premium' | 'start'
 
 export interface InscricaoRecord {
   id: string
@@ -9,6 +10,7 @@ export interface InscricaoRecord {
   telefone?: string
   status?: InscricaoStatus
   valor?: number
+  plano?: InscricaoPlano | string
   created: string
   updated: string
 }
