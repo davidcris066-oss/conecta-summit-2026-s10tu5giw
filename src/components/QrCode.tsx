@@ -46,7 +46,7 @@ export function QrCode({ value, size = 220, className = '', alt = 'QR Code Pix' 
 
   return (
     <div
-      className={`inline-flex items-center justify-center p-3 sm:p-3.5 bg-white rounded-2xl shadow-[0_10px_35px_rgba(0,0,0,0.5),0_0_25px_rgba(0,229,255,0.25)] border border-[#00E5FF]/40 ${className}`}
+      className={`inline-flex items-center justify-center ${className}`}
       role="img"
       aria-label={alt}
     >
@@ -54,10 +54,10 @@ export function QrCode({ value, size = 220, className = '', alt = 'QR Code Pix' 
         viewBox={`0 0 ${totalUnits} ${totalUnits}`}
         width={size}
         height={size}
-        className="w-full h-auto max-w-[220px] max-h-[220px] block"
+        className="w-full h-full block"
         shapeRendering="crispEdges"
       >
-        <rect width={totalUnits} height={totalUnits} fill="#FFFFFF" rx={1} />
+        <rect width={totalUnits} height={totalUnits} fill="#FFFFFF" />
         <path d={path} fill="#050A15" />
       </svg>
     </div>

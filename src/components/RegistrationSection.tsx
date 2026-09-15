@@ -16,7 +16,6 @@ import {
 import pb from '@/lib/pocketbase/client'
 import { BANK_DETAILS, TICKET_PRICE, getOfficialPixPayload } from '@/lib/pix'
 import { QrCode } from './QrCode'
-import sicrediPixQrCodeImg from '@/assets/whatsapp-image-2026-09-15-at-11.29.07-b92d4.jpeg'
 
 type Step = 'form' | 'payment' | 'pending'
 
@@ -43,7 +42,6 @@ export function RegistrationSection() {
   }>({})
   const [copied, setCopied] = useState(false)
   const [savedData, setSavedData] = useState<SavedRegistration | null>(null)
-  const [imageError, setImageError] = useState(false)
 
   const nomeId = useId()
   const emailId = useId()
@@ -490,26 +488,19 @@ export function RegistrationSection() {
 
               {/* QR Code Oficial Sicredi */}
               <div className="mb-6 flex flex-col items-center w-full">
-                <div className="relative group w-[260px] h-[260px] sm:w-[300px] sm:h-[300px] rounded-2xl bg-white p-3 sm:p-4 shadow-[0_15px_45px_rgba(0,0,0,0.65),0_0_35px_rgba(0,229,255,0.3)] border-2 border-[#00E5FF]/40 transition-transform duration-300 hover:scale-[1.01] flex items-center justify-center overflow-hidden">
-                  {!imageError ? (
-                    <div className="relative w-full h-full overflow-hidden rounded-xl bg-white flex items-center justify-center">
-                      <img
-                        src={sicrediPixQrCodeImg}
-                        alt="QR Code Pix oficial do Conecta Summit 2026 - Sicredi"
-                        className="absolute w-[240%] max-w-none h-auto select-none pointer-events-none transform -translate-y-[35%]"
-                        style={{ imageRendering: 'auto' }}
-                        onError={() => setImageError(true)}
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center w-full h-full">
-                      <QrCode
-                        value={pixPayload}
-                        size={220}
-                        alt="QR Code Pix oficial do Conecta Summit 2026 - Sicredi"
-                      />
-                    </div>
-                  )}
+                <div className="relative group w-[260px] h-[260px] sm:w-[300px] sm:h-[300px] rounded-2xl bg-white p-4 sm:p-5 shadow-[0_15px_45px_rgba(0,0,0,0.65),0_0_35px_rgba(0,229,255,0.3)] border-2 border-[#00E5FF]/40 transition-transform duration-300 hover:scale-[1.01] flex items-center justify-center overflow-hidden">
+                  {/*
+                    Geração direta e infalível via SVG vetorial (<QrCode />) do payload Pix oficial Sicredi.
+                    - Garante que a matriz do QR Code fique 100% visível, perfeitamente centralizada e nítida em qualquer tela.
+                    - Oculta completamente cabeçalhos, logos, legendas ou textos que quebravam no recorte CSS.
+                    - Escaneável com máxima nitidez por qualquer aplicativo bancário ou câmera.
+                  */}
+                  <QrCode
+                    value={pixPayload}
+                    size={260}
+                    className="w-full h-full max-w-[240px] max-h-[240px] sm:max-w-[260px] sm:max-h-[260px]"
+                    alt="QR Code Pix oficial do Conecta Summit 2026 - Sicredi"
+                  />
                 </div>
                 <span className="text-xs text-[#8FA3BF] mt-3.5 text-center">
                   Aponte a câmera do seu celular ou app bancário para o Código QR acima
